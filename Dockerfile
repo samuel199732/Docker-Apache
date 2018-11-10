@@ -45,9 +45,9 @@ RUN echo "---> Instalando Dependências Básicas" && \
      rm -rf /tmp/*;
 
 RUN chown -R psycho:psycho /var/run/apache2 && \
-        chown -R psycho:psycho /var/log/apache2 && \
-        chown -R psycho:psycho /var/lock/apache2 && \
-        chown -R psycho:psycho /var/lib/apache2
+        chown -R www-data:www-data /var/log/apache2 && \
+        chown -R www-data:www-data /var/lock/apache2 && \
+        chown -R www-data:www-data /var/lib/apache2
 
 WORKDIR /var/www/html
 
