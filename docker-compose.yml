@@ -5,9 +5,9 @@ services:
     build: .
     image: psycho-apache:latest
     container_name: psycho-apache
-    volumes: 
-      - .:/var/www/html/ 
+    volumes:
+      - .:/var/www/html/
     ports:
-      - "8001:80"
+      - "8001:8080"
     environment:
       - XDEBUG_ENABLED=true
