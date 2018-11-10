@@ -1,13 +1,19 @@
 FROM php:7.0-apache
 
-ADD bashrc /home/psycho/.bashrc
-
 ENV APACHE_RUN_USER www-data
 ENV APACHE_RUN_GROUP www-data
 ENV APACHE_LOG_DIR /var/log/apache2
-ENV APACHE_PID_FILE /var/run/apache2.pid
 ENV APACHE_RUN_DIR /var/run/apache2
 ENV APACHE_LOCK_DIR /var/lock/apache2
+
+ENV APACHE_DOCUMENT_ROOT=/var/www/html/public
+
+RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-available/*.conf && \
+ sed -ri -e 's!/var/www/!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/apache2.conf /etc/apache2/conf-available/*.conf && \
+ sed -i 's/Listen\ 80/Listen\ 8080/g' /etc/apache2/ports.conf && \
+ sed -i 's/\*\:80/\*\:8080/g' /etc/apache2/sites-available/*.conf
+
+ADD bashrc /home/psycho/.bashrc
 
 RUN echo "---> Instalando Dependências Básicas" && \
      apt-get update -y &&\
@@ -28,7 +34,7 @@ RUN echo "---> Instalando Dependências Básicas" && \
      docker-php-ext-install mysqli pdo pdo_mysql soap && \
      echo "---> Instalando Composer" && \
      curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer && \
-     echo "---> Configurando Aapche" && \
+     echo "---> Configurando Apache" && \
      a2enmod rewrite && \
      a2dismod mpm_event && \
      a2enmod mpm_prefork && \
@@ -38,10 +44,11 @@ RUN echo "---> Instalando Dependências Básicas" && \
      echo "---> Apagando Pasta Temporaria" && \
      rm -rf /tmp/*;
 
-ENV APACHE_DOCUMENT_ROOT=/var/www/html/public
+RUN chown -R psycho:psycho /var/run/apache2 && \
+        chown -R psycho:psycho /var/log/apache2 && \
+        chown -R psycho:psycho /var/lock/apache2 && \
+        chown -R psycho:psycho /var/lib/apache2
 
-RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-available/*.conf && sed -ri -e 's!/var/www/!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/apache2.conf /etc/apache2/conf-available/*.conf
+WORKDIR /var/www/html
 
-ENV PATH=/home/psycho/.composer/vendor/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
-
-WORKDIR "/var/www/html"
+USER psycho
