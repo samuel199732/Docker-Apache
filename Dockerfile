@@ -1,5 +1,8 @@
 FROM php:7.0-apache
 
+# Repository/Image Maintainer
+LABEL maintainer="Samuel Silva <samuelsilva199732@gmail.com.br>"
+
 ENV APACHE_RUN_USER www-data
 ENV APACHE_RUN_GROUP www-data
 ENV APACHE_LOG_DIR /var/log/apache2
