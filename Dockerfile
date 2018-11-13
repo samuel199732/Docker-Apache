@@ -47,6 +47,11 @@ RUN echo "---> Instalando Dependências Básicas" && \
      echo "---> Apagando Pasta Temporaria" && \
      rm -rf /tmp/*;
 
+RUN chown -R psycho:psycho /var/run/apache2 && \
+        chown -R psycho:psycho /var/log/apache2 && \
+        chown -R psycho:psycho /var/lock/apache2 && \
+        chown -R psycho:psycho /var/lib/apache2
+
 WORKDIR /var/www/html
 
 USER psycho
